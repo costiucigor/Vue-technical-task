@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from "vue";
-
+import store from "../store"
 
 const props = defineProps({
   name: String,
@@ -8,6 +8,18 @@ const props = defineProps({
   price: Number,
   image: String,
 });
+
+const addToCart = () => {
+  const product = {
+    id: Math.random().toString(),
+    name: props.name,
+    description: props.description,
+    price: props.price,
+    image: props.image,
+  };
+  store.dispatch('addToCart', product);
+}
+
 </script>
 
 <template>
@@ -23,7 +35,7 @@ const props = defineProps({
       </div>
       <!-- /.card-info -->
       <div class="card-buttons">
-        <button class="button button-primary button-add-cart">
+        <button class="button button-primary button-add-cart" @click="addToCart">
           <span class="button-card-text">В корзину</span>
           <span class="button-cart-svg"></span>
         </button>
@@ -113,7 +125,7 @@ const props = defineProps({
 }
 
 @media (max-width: 578px) {
-  .card-image {
+  card-image {
     width: 100%;
   }
 }

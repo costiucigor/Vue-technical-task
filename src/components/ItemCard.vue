@@ -36,7 +36,7 @@ const handleClick = () => {
   </div>
 </template>
 
-<style scoped>
+<style>
 .card-tag {
   font-style: normal;
   font-weight: normal;
@@ -59,12 +59,6 @@ const handleClick = () => {
   min-height: 275px;
   display: flex;
   flex-direction: column;
-}
-
-.card-image {
-  width: 100%;
-  height: 250px;
-  object-fit: cover;
 }
 
 .card-heading {

@@ -60,7 +60,7 @@ const redirect = (productsUrl: string) => {
   </section>
 </template>
 
-<style scoped>
+<style>
 .restaurants {
   min-height: auto;
 }

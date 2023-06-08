@@ -1,11 +1,23 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import NavBar from "@/components/NavBar.vue";
 import FooterComponent from "@/components/FooterComponent.vue";
+import CartModal from "@/components/CartModal.vue";
+import store from "@/store";
+import LoginFormModal from "@/components/LoginFormModal.vue";
+
+const cartOpen = computed(() => store.state.cartOpen);
+const modalOpen = computed(() => store.state.loginModal.showModal);
 </script>
 
+
 <template>
+  <div>Modal Open: {{ modalOpen }}</div>
   <NavBar />
 <router-view />
+  <CartModal v-if="cartOpen"/>
+  <!-- Add this line for debugging -->
+  <LoginFormModal v-if="modalOpen" />
   <FooterComponent />
 </template>
 

@@ -1,4 +1,33 @@
 <script setup lang="ts">
+import { useStore } from 'vuex';
+import { onMounted, watch } from 'vue';
+import { computed } from "vue";
+
+const store = useStore();
+
+onMounted(() => {
+  watch(
+      () => store.state.cartOpen,
+      (newValue) => {
+        if (newValue) {
+          console.log('Cart is open');
+        } else {
+          console.log('Cart is closed');
+        }
+      }
+  );
+});
+
+const toggleCart = () => {
+  store.dispatch('toggleCart');
+};
+
+const toggleModal = () => {
+  console.log('Toggling modal...');
+  store.dispatch('loginModal/toggleModal');
+}
+
+const cartItems = computed(() => store.state.cart);
 </script>
 
 <template>
@@ -12,13 +41,14 @@
       </label>
       <div class="buttons">
         <span class="user-name"></span>
-        <button class="button button-primary button-auth">
+        <button class="button button-primary button-auth" @click="toggleModal">
           <span class="button-auth-svg"></span>
           <span class="button-text">Войти</span>
         </button>
-        <button class="button button-cart" id="cart-button">
+        <button class="button button-cart" id="cart-button" @click="toggleCart">
           <span class="button-cart-svg"></span>
           <span class="button-text">Корзина</span>
+          <span>{{ cartItems.length }}</span>
         </button>
         <button class="button button-primary button-out">
           <span class="button-text">Выйти</span>

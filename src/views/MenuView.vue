@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import ProductCard from "@/components/ProductCard.vue";
-import restaurantData from "@/../public/db/partners.json";
-import {ref, onMounted} from 'vue';
-import {useRoute} from 'vue-router';
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 
 interface Restaurant {
   id: string;
@@ -17,21 +16,28 @@ interface Restaurant {
 
 const products = ref([]);
 const route = useRoute();
+const selectedRestaurant = ref<Restaurant | null>(null);
 
 const fetchProducts = () => {
   const productParam = route.params.products;
-  const jsonData = require(`/public/db/${productParam}`);
-  const restaurant = jsonData.find((restaurant: Restaurant) => restaurant.products === productParam);
-  products.value = jsonData;
-  if (restaurant) {
-    restaurantData.value = [restaurant];
-    products.value = require(`/public/db/${restaurant.products}`).default;
-  } else {
-    // Handle case when the selected product doesn't match any restaurant
-    console.error('Restaurant not found');
-  }
+  fetch('/db/partners.json')
+      .then(response => response.json())
+      .then(data => {
+        const restaurant = data.find((restaurant: Restaurant) => restaurant.products === productParam);
 
-  console.log(jsonData)
+        if (restaurant) {
+          products.value = require(`/public/db/${restaurant.products}`);
+          selectedRestaurant.value = restaurant;
+        } else {
+          // Handle case when the selected product doesn't match any restaurant
+          console.error('Restaurant not found');
+        }
+
+        console.log(products.value);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
 };
 
 onMounted(fetchProducts);
@@ -41,17 +47,18 @@ onMounted(fetchProducts);
   <main class="main">
     <div class="container">
       <section class="menu">
-            <div class="section-heading">
-              <h2 class="section-title restaurant-title">{{ restaurantData[0].name }}</h2>
-              <div class="card-info">
-                <div class="rating">
-                  {{ restaurantData[0].name }}
-                </div>
-                <div class="price">{{ restaurantData[0].price }} ₽</div>
-                <div class="category">{{ restaurantData[0].kitchen}}</div>
-              </div>
+        <div class="section-heading">
+          <h2 class="section-title restaurant-title">{{ selectedRestaurant?.name }}</h2>
+          <div class="card-info">
+            <div class="rating">
+              {{ selectedRestaurant?.stars }}
             </div>
+            <div class="price">{{ selectedRestaurant?.price }} ₽</div>
+            <div class="category">{{ selectedRestaurant?.kitchen }}</div>
+          </div>
+        </div>
         <div class="cards cards-menu">
+          <template v-if="products">
             <product-card
                 v-for="product in products"
                 :key="product.id"
@@ -62,6 +69,7 @@ onMounted(fetchProducts);
                 class="card"
             >
             </product-card>
+          </template>
         </div>
       </section>
     </div>
