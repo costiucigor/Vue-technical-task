@@ -1,49 +1,90 @@
 <script setup lang="ts">
-import { ref, defineProps } from 'vue';
+import {ref, defineProps, watch, onMounted, onUnmounted, computed} from 'vue';
 import { useStore } from 'vuex';
+
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  counter: number;
+}
 
 const props = defineProps({
   product: {
-    type: Object,
+    type: Object as () => Product,
     required: true,
   },
 });
 
-const counter = ref(1);
 const store = useStore();
 
-const decrementCounter = () => {
-  const product = store.state.cart.find((item: any) => item.name === props.product.name);
-  const initialProductPrice = props.product.price;
+const counter = ref(props.product.counter);
 
+const updateCounter = () => {
+  const product = store.state.cart.find((item: Product) => item.id === props.product.id);
+  if (product) {
+    product.counter = counter.value;
+    updateProductPrice(product);
+  }
+};
+
+const updateProductPrice = (product: Product) => {
+  const totalPrice = product.price * product.counter;
+  store.dispatch('updateTotalPrice', { productId: product.id, totalPrice });
+};
+
+const decrementCounter = () => {
   if (counter.value > 1) {
     counter.value--;
-    product.price = initialProductPrice / (counter.value + 1) * counter.value; // Update the price based on the initial product price and the counter
+    updateCounter();
   }
 };
 
 const incrementCounter = () => {
   counter.value++;
-  const product = store.state.cart.find((item: any) => item.name === props.product.name);
-  const initialProductPrice = props.product.price;
-
-  if (product) {
-    product.price = initialProductPrice / (counter.value - 1) * counter.value; // Update the price based on the initial product price and the counter
-  }
+  updateCounter();
 };
 
 const removeFromCart = () => {
-  store.commit('removeFromCart', props.product.id);
+  store.dispatch('removeFromCart', props.product.id);
 };
 
+watch(
+    () => props.product.counter,
+    (newCounter) => {
+      counter.value = newCounter;
+      updateCounter();
+    }
+);
+
+onMounted(() => {
+  const initialProductPrice = props.product.price;
+  const totalPrice = initialProductPrice * counter.value;
+  store.dispatch('updateTotalPrice', { productId: props.product.id, totalPrice });
+  console.log(totalPriceForProduct.value)
+});
+
+const totalPriceForProduct = computed(() => {
+  const product = store.state.cart.find((item: Product) => item.id === props.product.id);
+  if (product) {
+    const totalPrice = product.price * product.counter;
+    return totalPrice;
+  }
+  return 0;
+});
+
+onUnmounted(updateCounter);
 </script>
+
 
 <template>
   <div class="food-row">
     <img class="product-image" :src="props.product.image" alt="Product Image">
     <div class="product-details">
       <span class="food-name">{{ props.product.name }}</span>
-      <strong class="food-price">{{ store.getters.getProductPrice(props.product.id) }} ₽</strong>
+      <strong class="food-price">{{ totalPriceForProduct }} ₽</strong>
     </div>
     <div class="food-counter">
       <button class="counter-button" @click.stop.prevent="decrementCounter">-</button>
@@ -55,13 +96,34 @@ const removeFromCart = () => {
 </template>
 
 <style scoped>
-/* styles for the food cart component */
+.food-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #d9d9d9;
+  margin-bottom: 15px;
+}
+
+.food-name {
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 32px;
+}
+
+.food-price {
+  margin-left: auto;
+  margin-right: 47px;
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 32px;
+}
 
 .product-image {
-  width: 10vw; /* Responsive width based on viewport */
-  height: 10vw; /* Responsive height based on viewport */
+  width: 10vw;
+  height: 10vw;
   object-fit: cover;
-  margin-right: 1rem; /* Responsive margin */
+  margin-right: 1rem;
 }
 
 .product-details {
@@ -70,7 +132,7 @@ const removeFromCart = () => {
 }
 
 .food-name {
-  margin-right: 1rem; /* Responsive margin */
+  margin-right: 1rem;
 }
 
 .food-price {
@@ -82,19 +144,35 @@ const removeFromCart = () => {
   align-items: center;
 }
 
+.counter {
+  font-size: 16px;
+  line-height: 24px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 .counter-button {
-  margin: 0 0.5rem; /* Responsive margin */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 39px;
+  height: 32px;
+  background: #ffffff;
+  border: 1px solid #40a9ff;
+  box-sizing: border-box;
+  border-radius: 2px;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 22px;
+  color: #40a9ff;
 }
 
-.remove-button {
-  margin-left: 1rem; /* Responsive margin */
-  background: red;
-  border: none;
-  border-radius: 4px;
-  color: white;
+.counter-button:hover {
+  background: #40a9ff;
+  border: 1px solid #ffffff;
+  color: #ffffff;
 }
 
-/* Responsive styles for different screen sizes */
 @media screen and (max-width: 768px) {
   .product-image {
     width: 20vw;
@@ -114,7 +192,27 @@ const removeFromCart = () => {
   }
 }
 
+@media screen and (max-width: 625px) {
+  .food-counter {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
 @media screen and (max-width: 480px) {
+  .food-counter {
+    position: absolute;
+    left: 150px;
+    top: 160px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
   .product-image {
     width: 30vw;
     height: 30vw;

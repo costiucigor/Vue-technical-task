@@ -57,6 +57,7 @@ const closeModal = () => {
   padding: 20px;
   border-radius: 5px;
   max-width: 400px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .close-auth {
@@ -78,11 +79,13 @@ const closeModal = () => {
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 10px;
+  color: #333;
 }
 
 .label-auth {
   display: block;
   margin-bottom: 10px;
+  color: #555;
 }
 
 .label-auth span {
@@ -95,6 +98,13 @@ const closeModal = () => {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+#login:focus,
+#password:focus {
+  border-color: #007bff;
 }
 
 .modal-footer {
@@ -113,9 +123,19 @@ const closeModal = () => {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .button-login:hover {
   background-color: #0056b3;
+}
+
+.button-login:focus {
+  outline: none;
+}
+
+.button-login:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 </style>

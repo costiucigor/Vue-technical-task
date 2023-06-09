@@ -18,26 +18,24 @@ const products = ref([]);
 const route = useRoute();
 const selectedRestaurant = ref<Restaurant | null>(null);
 
-const fetchProducts = () => {
-  const productParam = route.params.products;
-  fetch('/db/partners.json')
-      .then(response => response.json())
-      .then(data => {
-        const restaurant = data.find((restaurant: Restaurant) => restaurant.products === productParam);
+const fetchProducts = async () => {
+  try {
+    const productParam = route.params.products;
+    const response = await fetch('/db/partners.json');
+    const data = await response.json();
+    const restaurant = data.find((restaurant: any) => restaurant.products === productParam);
 
-        if (restaurant) {
-          products.value = require(`/public/db/${restaurant.products}`);
-          selectedRestaurant.value = restaurant;
-        } else {
-          // Handle case when the selected product doesn't match any restaurant
-          console.error('Restaurant not found');
-        }
+    if (restaurant) {
+      products.value = require(`/public/db/${restaurant.products}`);
+      selectedRestaurant.value = restaurant;
+    } else {
+      console.error('Restaurant not found');
+    }
 
-        console.log(products.value);
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
+    console.log(products.value);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
 };
 
 onMounted(fetchProducts);

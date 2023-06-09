@@ -7,7 +7,7 @@ const store = useStore();
 
 const cartItems = computed(() => store.state.cart);
 const totalPrice = computed(() => {
-  return cartItems.value.reduce((total: any, product: any) => total + product.price, 0);
+  return cartItems.value.reduce((total: any, product: any) => total + product.price * product.counter, 0);
 });
 
 const closeModal = () => {
@@ -22,9 +22,14 @@ const closeModal = () => {
         <h3 class="modal-title">Корзина</h3>
         <button class="close" @click="closeModal">&times;</button>
       </div>
-      <ul>
-        <CartItems v-for="product in cartItems" :key="product.id" :product="product" />
-      </ul>
+      <div class="modal-content" v-if="cartItems.length > 0">
+        <div v-for="product in cartItems" :key="product.id">
+          <CartItems :product="product" />
+        </div>
+      </div>
+      <div v-else>
+        <span class="modal-message">Нет товаров :(</span>
+      </div>
       <div class="modal-footer">
         <span class="modal-pricetag">{{ totalPrice }} ₽</span>
         <div class="footer-buttons">
@@ -49,7 +54,8 @@ const closeModal = () => {
   justify-content: center;
   align-items: center;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 9999;
+  z-index: 1;
+  overflow-y: auto; /* Add scrollable overflow for the modal */
 }
 
 .modal-dialog {
@@ -58,6 +64,8 @@ const closeModal = () => {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  max-height: 80vh; /* Set a maximum height for the modal */
+  overflow-y: auto; /* Add scrollable overflow for the modal content */
 }
 
 .modal-header {
@@ -65,6 +73,15 @@ const closeModal = () => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+}
+
+.modal-message {
+  padding-top: 60px;
+  padding-bottom: 60px;
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .close {

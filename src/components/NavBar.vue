@@ -1,29 +1,20 @@
 <script setup lang="ts">
 import { useStore } from 'vuex';
-import { onMounted, watch } from 'vue';
 import { computed } from "vue";
+import {useRouter} from "vue-router";
 
 const store = useStore();
-
-onMounted(() => {
-  watch(
-      () => store.state.cartOpen,
-      (newValue) => {
-        if (newValue) {
-          console.log('Cart is open');
-        } else {
-          console.log('Cart is closed');
-        }
-      }
-  );
-});
+const router = useRouter();
 
 const toggleCart = () => {
   store.dispatch('toggleCart');
 };
 
+const redirectToHome = () => {
+  router.push("/");
+}
+
 const toggleModal = () => {
-  console.log('Toggling modal...');
   store.dispatch('loginModal/toggleModal');
 }
 
@@ -33,7 +24,7 @@ const cartItems = computed(() => store.state.cart);
 <template>
   <div class="container">
     <header class="header">
-      <a class="logo">
+      <a class="logo" @click="redirectToHome">
         <img src="@/assets/img/icon/logo.svg" alt="Logo" />
       </a>
       <label class="address">
@@ -48,11 +39,7 @@ const cartItems = computed(() => store.state.cart);
         <button class="button button-cart" id="cart-button" @click="toggleCart">
           <span class="button-cart-svg"></span>
           <span class="button-text">Корзина</span>
-          <span>{{ cartItems.length }}</span>
-        </button>
-        <button class="button button-primary button-out">
-          <span class="button-text">Выйти</span>
-          <span class="button-out-svg"></span>
+          <span class="cart-info">{{ cartItems.length }}</span>
         </button>
       </div>
     </header>
@@ -78,7 +65,7 @@ const cartItems = computed(() => store.state.cart);
 
 .input-address {
   width: 100%;
-  /*background-image: url(../img/icon/home.svg);*/
+  background-image: url("@/assets/img/icon/home.svg");
 }
 
 .header {
@@ -86,6 +73,19 @@ const cartItems = computed(() => store.state.cart);
   align-items: center;
   justify-content: space-between;
   margin-bottom: 40px;
+}
+
+.cart-info {
+  margin-left: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  background-color: #ff0000;
+  color: #ffffff;
+  font-size: 12px;
+  border-radius: 50%;
 }
 
 .container {
@@ -133,12 +133,33 @@ const cartItems = computed(() => store.state.cart);
   width: 24px;
   height: 24px;
   background-color: #fff;
-  /*-webkit-mask: url("../img/icon/user.svg") no-repeat 50% 50%;*/
-  /*mask: url("../img/icon/user.svg") no-repeat 50% 50%;*/
+  webkit-mask: url("@/assets/img/icon/user.svg") no-repeat 50% 50%;
+  mask: url("@/assets/img/icon/user.svg") no-repeat 50% 50%;
   background-repeat: no-repeat;
 }
 
 .button-primary:hover .button-auth-svg {
+  background-color: #595959;
+}
+
+.button .button-cart-svg {
+  width: 24px;
+  height: 24px;
+  background-color: #595959;
+  -webkit-mask: url("@/assets/img/icon/shopping-cart.svg") no-repeat 50% 50%;
+  mask: url("@/assets/img/icon/shopping-cart.svg") no-repeat 50% 50%;
+  background-repeat: no-repeat;
+}
+
+.button-primary .button-cart-svg {
+  background-color: #fff;
+}
+
+.button:hover .button-cart-svg {
+  background-color: #fff;
+}
+
+.button-primary:hover .button-cart-svg {
   background-color: #595959;
 }
 

@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { defineProps } from "vue";
+import { defineProps, ref } from "vue";
 import store from "../store"
+
+const showCartAnimation = ref(false);
 
 const props = defineProps({
   name: String,
@@ -16,10 +18,16 @@ const addToCart = () => {
     description: props.description,
     price: props.price,
     image: props.image,
+    counter: 1,
+    initialProductPrice: props.price,
   };
   store.dispatch('addToCart', product);
-}
 
+  showCartAnimation.value = true;
+  setTimeout(() => {
+    showCartAnimation.value = false;
+  }, 200);
+}
 </script>
 
 <template>
@@ -39,6 +47,9 @@ const addToCart = () => {
           <span class="button-card-text">В корзину</span>
           <span class="button-cart-svg"></span>
         </button>
+        <transition name="cart-animation">
+          <div v-if="showCartAnimation" class="cart-animation"></div>
+        </transition>
         <strong class="card-price-bold">{{ props.price }} ₽</strong>
       </div>
     </div>
@@ -47,60 +58,36 @@ const addToCart = () => {
 </template>
 
 <style scoped>
-.card-image {
+.cart-animation {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 250px;
-  object-fit: cover;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.5);
+  animation-name: cart-enter;
+  animation-duration: 0.2s;
 }
 
-
-.card-text {
-  padding: 20px 23px 35px;
-  display: flex;
-  flex-direction: column;
+@keyframes cart-enter {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 2;
+  }
 }
-
-
-.card-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.card-title {
-  margin: 0;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 22px;
-  line-height: 32px;
-}
-
-.card-title-reg {
-  font-weight: 400;
-}
-
-.card-info {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.ingredients {
-  color: #8c8c8c;
-  font-size: 18px;
-  line-height: 21px;
-}
-
 .card-buttons {
   display: flex;
   margin-top: 24px;
   flex-grow: 1;
   align-items: flex-end;
-}
-
-.button-card-text {
-  margin-right: 10px;
 }
 
 .button .button-cart-svg {
@@ -124,9 +111,16 @@ const addToCart = () => {
   background-color: #595959;
 }
 
-@media (max-width: 578px) {
-  card-image {
-    width: 100%;
+.card-price-bold {
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 32px;
+  margin-left: 30px;
+}
+
+@media (max-width: 768px) {
+  .card-price-bold {
+    margin-left: 20px;
   }
 }
 </style>

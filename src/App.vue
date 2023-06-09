@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import store from "@/store";
 import NavBar from "@/components/NavBar.vue";
 import FooterComponent from "@/components/FooterComponent.vue";
 import CartModal from "@/components/CartModal.vue";
-import store from "@/store";
 import LoginFormModal from "@/components/LoginFormModal.vue";
 
 const cartOpen = computed(() => store.state.cartOpen);
@@ -12,11 +12,9 @@ const modalOpen = computed(() => store.state.loginModal.showModal);
 
 
 <template>
-  <div>Modal Open: {{ modalOpen }}</div>
   <NavBar />
-<router-view />
+ <router-view />
   <CartModal v-if="cartOpen"/>
-  <!-- Add this line for debugging -->
   <LoginFormModal v-if="modalOpen" />
   <FooterComponent />
 </template>
@@ -323,6 +321,13 @@ button {
   background-color: #595959;
 }
 
+.cards {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
 .card {
   background: #ffffff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -332,6 +337,68 @@ button {
   flex-basis: 31%;
   text-decoration: none;
 }
+
+.card-restaurant {
+  cursor: pointer
+}
+
+.card-image {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+
+.card-text {
+  padding: 20px 23px 35px;
+  min-height: 275px;
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+.restaurants .card-text {
+  min-height: auto;
+}
+
+.card-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.card-title {
+  margin: 0;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 32px;
+}
+
+.card-title-reg {
+  font-weight: 400;
+}
+
+.card-tag {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 20px;
+  color: #ffffff;
+  background: #262626;
+  border-radius: 2px;
+  padding: 1px 8px;
+}
+
+.card-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+
 
 .button-out {
   display: none;
@@ -485,78 +552,15 @@ button {
   margin-bottom: 22px;
 }
 
-.food-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #d9d9d9;
-  margin-bottom: 15px;
-}
-
-.food-name {
-  font-weight: normal;
-  font-size: 18px;
-  line-height: 32px;
-}
-
-.food-price {
-  margin-left: auto;
-  margin-right: 47px;
-  font-weight: bold;
-  font-size: 20px;
-  line-height: 32px;
-}
-
 .food-counter {
   display: flex;
   align-items: center;
-}
-
-.counter-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 39px;
-  height: 32px;
-  background: #ffffff;
-  border: 1px solid #40a9ff;
-  box-sizing: border-box;
-  border-radius: 2px;
-  font-weight: normal;
-  font-size: 14px;
-  line-height: 22px;
-  color: #40a9ff;
-}
-
-.counter-button:hover {
-  background: #40a9ff;
-  border: 1px solid #ffffff;
-  color: #ffffff;
-}
-
-.counter {
-  font-size: 16px;
-  line-height: 24px;
-  margin-left: 10px;
-  margin-right: 10px;
-}
-
-.modal-pricetag {
-  background: #262626;
-  border-radius: 5px;
-  color: #ffffff;
-  padding: 15px 20px;
-  font-size: 20px;
-  line-height: 23px;
 }
 
 @media (max-width: 1366px) {
   .container {
     max-width: 960px;
   }
-
-
   .kebab {
     background-position: top -5px right -93px;
     background-size: 530px;
