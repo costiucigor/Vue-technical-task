@@ -388,7 +388,11 @@ button {
   flex-wrap: wrap;
 }
 
-
+.card-image {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
 
 .button-out {
   display: none;
