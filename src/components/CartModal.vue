@@ -42,8 +42,6 @@ const closeModal = () => {
 </template>
 
 <style scoped>
-/* styles for the cart modal component */
-
 .cart-modal {
   position: fixed;
   top: 0;
@@ -55,7 +53,7 @@ const closeModal = () => {
   align-items: center;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1;
-  overflow-y: auto; /* Add scrollable overflow for the modal */
+  overflow-y: auto;
 }
 
 .modal-dialog {
@@ -64,8 +62,8 @@ const closeModal = () => {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  max-height: 80vh; /* Set a maximum height for the modal */
-  overflow-y: auto; /* Add scrollable overflow for the modal content */
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 .modal-header {
