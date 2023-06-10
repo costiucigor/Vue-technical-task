@@ -194,24 +194,22 @@ onUnmounted(updateCounter);
 
 @media screen and (max-width: 625px) {
   .food-counter {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    gap: 20px;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .food-counter {
-    position: absolute;
-    left: 150px;
-    top: 160px;
+    position: relative;
+    right: 242px;
+    margin-top: 160px;
     flex-grow: 1;
     display: flex;
     flex-direction: row;
     gap: 1rem;
     align-items: flex-start;
   }
+}
+
+@media screen and (max-width: 480px) {
+  .food-counter {
+    right: 320px;
+  }
+
 
   .product-image {
     width: 30vw;

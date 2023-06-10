@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
 import CartItems from "@/components/CartItems.vue";
 
@@ -12,6 +12,18 @@ const totalPrice = computed(() => {
 
 const closeModal = () => {
   store.dispatch('toggleCart');
+};
+
+const showModal = ref(false);
+const isLoading = ref(false);
+
+const placeOrder = async () => {
+  showModal.value = true;
+  isLoading.value = true;
+  store.state.cart = [];
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  await store.dispatch('toggleCart');
+  isLoading.value = false;
 };
 </script>
 
@@ -27,14 +39,18 @@ const closeModal = () => {
           <CartItems :product="product" />
         </div>
       </div>
+      <div v-else-if="showModal">
+        <div class="loading-animation"></div>
+        <span class="modal-message">Получаем заказ ;)</span>
+      </div>
       <div v-else>
         <span class="modal-message">Нет товаров :(</span>
       </div>
       <div class="modal-footer">
         <span class="modal-pricetag">{{ totalPrice }} ₽</span>
         <div class="footer-buttons">
-          <button class="button button-primary">Оформить заказ</button>
-          <button class="button clear-cart" @click="closeModal">Отмена</button>
+          <button class="button button-primary" @click="placeOrder" :disabled="isLoading">Оформить заказ</button>
+          <button class="button clear-cart" @click="closeModal" :disabled="isLoading">Отмена</button>
         </div>
       </div>
     </div>
@@ -112,5 +128,24 @@ li {
 
 .footer-buttons {
   display: flex;
+}
+
+.loading-animation {
+  margin: auto;
+  width: 50px;
+  height: 50px;
+  border: 3px solid #f3f3f3;
+  border-top-color: #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
