@@ -25,6 +25,7 @@ const closeModal = () => {
             <span>Пароль</span>
             <input id="password" type="password">
           </label>
+          <p class="forgot-password">Забыли пароль?</p>
         </fieldset>
         <!-- /.modal-body -->
         <div class="modal-footer">
@@ -69,6 +70,12 @@ const closeModal = () => {
   border: none;
   background-color: transparent;
   cursor: pointer;
+}
+
+.forgot-password {
+  font-size: 12px;
+  margin-top: 10px;
+  color: #555;
 }
 
 .modal-body {
